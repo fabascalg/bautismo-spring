@@ -44,12 +44,13 @@ public class EquipoController {
 
     @DeleteMapping("/{nombre}")
     public void eliminarEquipo(@PathVariable String nombre) {
-        /*
+        /* así lo hizo la primera vez, pero no iba bien...
         for (Equipo equipo: equipos){
             if (equipo.getNombrePais().equalsIgnoreCase(nombre)){
                 equipos.remove(equipo);
             }
         }
+        * el que viene a continuación funciona perfectamente
          */
         Optional<Equipo> optEquipo = equipos.stream().filter(equipo -> equipo.getNombrePais().equalsIgnoreCase(nombre)).findFirst();
         if (optEquipo.isPresent()){
@@ -58,13 +59,19 @@ public class EquipoController {
     }
 
     @PutMapping
-    public void modificarEquipo(@RequestBody Equipo equipoModif){
+    public String modificarEquipo(@RequestBody Equipo equipoModif){
         for (Equipo equipo: equipos){
+            // encontro el mismo nombre pero si hay un cambio entre mayúsculas o minúsculas, lo va a guardar
+            // en el nombre, me refiero
             if (equipo.getNombrePais().equalsIgnoreCase(equipoModif.getNombrePais())){
+                equipo.setNombrePais(equipoModif.getNombrePais());
                 equipo.setConf(equipoModif.getConf());
                 equipo.setRankingFifa(equipoModif.getRankingFifa());
+                return "el registro ha sido modificado";
             }
         }
+        return "el registro no se ha encontrado";
+
     }
 
     @GetMapping("/jugar/{equipoA}/{equipoB}")
